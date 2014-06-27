@@ -179,7 +179,7 @@ public class EKGAnomalyDetection extends AnomalyDetection {
     //output anomalies
     try (Formatter out = new Formatter("anomalies.tsv")) {
       for (int i = 0; i < anomalies.numRows(); i++) {
-        out.format("%.3f\t%.3f\t%d\n", anomalies.get(i, 0), anomalies.get(i, 1), anomalies.get(i, 2));
+        out.format("%.3f\t%.3f\t%d\n", anomalies.get(i, 0), anomalies.get(i, 1), (int) anomalies.get(i, 2));
       }
     }
   }

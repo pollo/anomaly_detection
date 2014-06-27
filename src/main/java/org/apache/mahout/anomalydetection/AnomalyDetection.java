@@ -19,6 +19,7 @@ package org.apache.mahout.anomalydetection;
 
 import org.apache.mahout.math.Centroid;
 import org.apache.mahout.math.DenseMatrix;
+import org.apache.mahout.math.Vector;
 import org.apache.mahout.math.WeightedVector;
 import org.apache.mahout.math.function.Functions;
 import org.apache.mahout.math.stats.TDigest;
@@ -43,11 +44,11 @@ public abstract class AnomalyDetection {
 		// double quantile = 90 / 100;
 
 		// subtracting vectors
-		data.assign(reconstructedSignal, Functions.MINUS);
+		Vector delta = data.minus(reconstructedSignal);
 
 		// t-digest application
 		org.apache.mahout.math.stats.TDigest digest = new TDigest(compression);
-		for (org.apache.mahout.math.Vector.Element element : data.all()) {
+		for (org.apache.mahout.math.Vector.Element element : delta.all()) {
 			digest.add(element.get());
 		}
 
@@ -56,23 +57,16 @@ public abstract class AnomalyDetection {
 
 		// TODO: performance optimization, refactor code
 		for (int i = 0, j = 0; i < data.size(); i++) {
-			double element = data.getQuick(i);
-			if (element > upperThreshold) {
+			double element = delta.getQuick(i);
+			if (element > upperThreshold || element < lowerThreshold) {
 				// insert value and index of value to return matrix
-				anomalies.viewColumn(0).setQuick(j, element);
-				anomalies.viewColumn(1).setQuick(j, element - lowerThreshold);
-				anomalies.viewColumn(2).setQuick(j, i);
-				// increment matrix row
-				j++;
-			} else if (element < upperThreshold) {
-				// insert value and index of value to return matrix
-				anomalies.viewColumn(0).setQuick(j, element);
-				anomalies.viewColumn(1).setQuick(j, upperThreshold - element);
+				anomalies.viewColumn(0).setQuick(j, data.getQuick(i));
+				anomalies.viewColumn(1).setQuick(j, element);
 				anomalies.viewColumn(2).setQuick(j, i);
 				// increment matrix row
 				j++;
 			}
-		}
+    }
 		return anomalies;
 	}
 }
