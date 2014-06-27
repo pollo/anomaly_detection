@@ -17,8 +17,16 @@
 
 package org.apache.mahout.anomalydetection;
 
-public class AnomalyDetection {
+import org.apache.mahout.math.Centroid;
+import org.apache.mahout.math.WeightedVector;
 
+public abstract class AnomalyDetection {
+  public abstract void buildModel(org.apache.mahout.math.Vector data);
 
+  public abstract org.apache.mahout.math.Vector reconstructSignal(org.apache.mahout.math.Vector data);
 
+  public void detectAnomalies(org.apache.mahout.math.Vector data,
+                              org.apache.mahout.math.Vector reconstructedSignal) {
+    //TODO: implement t-digest
+  }
 }
