@@ -173,7 +173,15 @@ public class EKGAnomalyDetection extends AnomalyDetection {
 
     Vector reconstructedSignal = this.reconstructSignal(trace);
 
-    this.detectAnomalies(trace, reconstructedSignal);
+    double quantile = 90.0/100;
+    Matrix anomalies = this.detectAnomalies(trace, reconstructedSignal, quantile);
+
+    //output anomalies
+    try (Formatter out = new Formatter("anomalies.tsv")) {
+      for (int i = 0; i < anomalies.numRows(); i++) {
+        out.format("%.3f\t%.3f\t%d\n", anomalies.get(i, 0), anomalies.get(i, 1), anomalies.get(i, 2));
+      }
+    }
   }
 
   public static void main(String[] args) throws IOException {
