@@ -35,8 +35,8 @@ public abstract class AnomalyDetection {
 
 		// TODO: check length of data equal length of constructor
 		org.apache.mahout.math.Matrix anomalies = new DenseMatrix(data.size(),
-				2);
-		
+				3);
+
 		// TODO: clarify whether this should be dynamic or not
 		double compression = 100;
 		// TODO: refactor code
@@ -57,10 +57,18 @@ public abstract class AnomalyDetection {
 		// TODO: performance optimization, refactor code
 		for (int i = 0, j = 0; i < data.size(); i++) {
 			double element = data.getQuick(i);
-			if (element > upperThreshold || element < lowerThreshold) {
+			if (element > upperThreshold) {
 				// insert value and index of value to return matrix
 				anomalies.viewColumn(0).setQuick(j, element);
-				anomalies.viewColumn(1).setQuick(j, i);
+				anomalies.viewColumn(1).setQuick(j, element - lowerThreshold);
+				anomalies.viewColumn(2).setQuick(j, i);
+				// increment matrix row
+				j++;
+			} else if (element < upperThreshold) {
+				// insert value and index of value to return matrix
+				anomalies.viewColumn(0).setQuick(j, element);
+				anomalies.viewColumn(1).setQuick(j, upperThreshold - element);
+				anomalies.viewColumn(2).setQuick(j, i);
 				// increment matrix row
 				j++;
 			}
