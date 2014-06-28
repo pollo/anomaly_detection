@@ -31,12 +31,17 @@ import org.apache.mahout.math.random.WeightedThing;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 
 import java.io.*;
 
 /**
+ * Example of anomaly detection using AnomalyDetection.
+ * The code is taken from Ted Dunning's EKG anomaly detection example (https://github.com/tdunning/anomaly-detection)
+ * and adapted to the AnomalyDetection pattern.
+ *
  * Read a bunch of EKG data, chop out windows and cluster the windows. Then reconstruct the signal and
  * figure out the error.
  */
@@ -44,6 +49,9 @@ public class EKGAnomalyDetection extends AnomalyDetection {
   private final int WINDOW = 32;
   private int STEP = 2;
   private int SAMPLES = 200000;
+
+  private final double ANOMALY_FRACTION = 10.0/100;
+  private final double COMPRESSION = 100;
 
   private Vector window;
   private double t0;
@@ -171,15 +179,19 @@ public class EKGAnomalyDetection extends AnomalyDetection {
 
     this.buildModel(trace);
 
-    Vector reconstructedSignal = this.reconstructSignal(trace);
-
-    double quantile = 90.0/100;
-    Matrix anomalies = this.detectAnomalies(trace, reconstructedSignal, quantile);
+    ArrayList<Anomaly> anomalies = null;
+    try {
+      anomalies = this.detectAnomalies(trace, ANOMALY_FRACTION, COMPRESSION);
+    } catch (IllegalArgumentException e) {
+      System.err.println("Error occured while detecting anomalies");
+      System.err.println(e);
+      System.exit(1);
+    }
 
     //output anomalies
     try (Formatter out = new Formatter("anomalies.tsv")) {
-      for (int i = 0; i < anomalies.numRows(); i++) {
-        out.format("%.3f\t%.3f\t%d\n", anomalies.get(i, 0), anomalies.get(i, 1), (int) anomalies.get(i, 2));
+      for (Anomaly a : anomalies) {
+        out.format("%.3f\t%.3f\t%d\n", a.getData(), a.getError(), a.getIndex());
       }
     }
   }
