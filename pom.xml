@@ -4,14 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tdunning</groupId>
+    <groupId>org.apache.mahout.anomalydetection</groupId>
     <artifactId>AnomalyDetector</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>Anomaly Detection Demo</name>
-    <description>A demonstration of sub-sequence clustering for anomaly detection</description>
-    <url>https://github.com/tdunning/anomaly-detection</url>
+    <description>
+      Anomaly Detection in Mahout with t-digest and example code.
+    </description>
+    <url>https://github.com/pollo/anomaly_detection</url>
 
     <licenses>
         <license>
@@ -22,25 +24,36 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/tdunning/anomaly-detection.git</connection>
-        <developerConnection>scm:git:https://github.com/tdunning/anomaly-detection.git</developerConnection>
+        <connection>scm:git:https://github.com/pollo/anomaly_detection.git</connection>
+        <developerConnection>scm:git:https://github.com/pollo/anomaly_detection.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/tdunning/anomaly-detection</url>
+        <url>https://github.com/pollo/anomaly_detection</url>
     </scm>
 
     <developers>
         <developer>
-            <id>tdunning</id>
-            <name>Ted</name>
-            <email>ted.dunning@gmail.com</email>
-            <url>https://github.com/tdunning/anomaly-detection</url>
+            <id>pollo</id>
+            <name>Matteo Poletti</name>
+            <email>pole.matteo@gmail.com</email>
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>-8</timezone>
-            <properties>
-                <twitter>@ted_dunning</twitter>
-            </properties>
+        </developer>
+        <developer>
+            <id>dbernau</id>
+            <name>Daniel Bernau</name>
+            <email>dan.bernau@gmail.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>nodo</id>
+            <name>Andrea Nodari</name>
+            <email>andrea.nodari91@gmail.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
         </developer>
     </developers>
     <properties>
@@ -54,11 +67,6 @@
             <version>0.9</version>
         </dependency>
         <dependency>
-            <groupId>com.xeiam.xchart</groupId>
-            <artifactId>xchart-demo</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
@@ -67,16 +75,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
-                <configuration>
-                    <parallel>methods</parallel>
-                    <perCoreThreadCount>true</perCoreThreadCount>
-                    <threadCount>1</threadCount>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -115,63 +113,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.4.2</version>
-                <configuration>
-                    <arguments>-Dgpg.keyname=${gpg.keyname}</arguments>
-                    <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus snapshot repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Sonatype Nexus release repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
-                        <configuration>
-                            <passphrase>${gpg.passphrase}</passphrase>
-                            <keyname>${gpg.keyname}</keyname>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
