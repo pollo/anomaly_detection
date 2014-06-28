@@ -1,10 +1,1 @@
-.DS_Store
-*~
-
-anomaly_detection.iml
-.idea
-<<<<<<< HEAD
-/target
-=======
 target/
->>>>>>> 27eebb42a874c2bdbec1263d9226d9d506378362
