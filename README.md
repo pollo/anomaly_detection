@@ -16,11 +16,11 @@ For further information:
 ### Anomaly detection
 
 * [Practical Machine Learning: A New Look At Anomaly Detection by Ted Dunning and Ellen Friedman](http://info.mapr.com/resources_ebook_anewlook_anomalydetection.html?cid=blog)
-* [Ted Dunning's talk about anomaly detection](http://berlinbuzzwords.de/session/deep-learning-high-performance-time-series-databases)
-* [Ted Dunning's example on anomaly detection on EKG data](https://github.com/tdunning/anomaly-detection)
+* [A talk about anomaly detection](http://berlinbuzzwords.de/session/deep-learning-high-performance-time-series-databases)
+* [Related to this example on anomaly detection on EKG data](https://github.com/tdunning/anomaly-detection)
 
 ### t-digest algorithm
 
-* [Ted Dunning's implementation of t-digest](https://github.com/tdunning/t-digest)
+* [The original implementation of and documentation for t-digest](https://github.com/tdunning/t-digest)
 
 
