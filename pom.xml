@@ -2,118 +2,119 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.apache.mahout.anomalydetection</groupId>
-    <artifactId>AnomalyDetector</artifactId>
-    <version>1.0-SNAPSHOT</version>
+  <groupId>org.apache.mahout.anomalydetection</groupId>
+  <artifactId>AnomalyDetector</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
-    <packaging>jar</packaging>
-    <name>Anomaly Detection Demo</name>
-    <description>
-      Anomaly Detection in Mahout with t-digest and example code.
-    </description>
+  <packaging>jar</packaging>
+  <name>Anomaly Detection Demo</name>
+  <description>
+    Anomaly Detection in Mahout with t-digest and example code.
+  </description>
+  <url>https://github.com/pollo/anomaly_detection</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:https://github.com/pollo/anomaly_detection.git</connection>
+    <developerConnection>scm:git:https://github.com/pollo/anomaly_detection.git
+    </developerConnection>
+    <tag>HEAD</tag>
     <url>https://github.com/pollo/anomaly_detection</url>
+  </scm>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+  <developers>
+    <developer>
+      <id>pollo</id>
+      <name>Matteo Poletti</name>
+      <email>pole.matteo@gmail.com</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>dbernau</id>
+      <name>Daniel Bernau</name>
+      <email>dan.bernau@gmail.com</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>nodo</id>
+      <name>Andrea Nodari</name>
+      <email>andrea.nodari91@gmail.com</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-    <scm>
-        <connection>scm:git:https://github.com/pollo/anomaly_detection.git</connection>
-        <developerConnection>scm:git:https://github.com/pollo/anomaly_detection.git</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/pollo/anomaly_detection</url>
-    </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.mahout</groupId>
+      <artifactId>mahout-core</artifactId>
+      <version>0.9</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+    </dependency>
+  </dependencies>
 
-    <developers>
-        <developer>
-            <id>pollo</id>
-            <name>Matteo Poletti</name>
-            <email>pole.matteo@gmail.com</email>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>dbernau</id>
-            <name>Daniel Bernau</name>
-            <email>dan.bernau@gmail.com</email>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>nodo</id>
-            <name>Andrea Nodari</name>
-            <email>andrea.nodari91@gmail.com</email>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <verbose>true</verbose>
+          <compilerVersion>1.7</compilerVersion>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout-core</artifactId>
-            <version>0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <verbose>true</verbose>
-                    <compilerVersion>1.7</compilerVersion>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
