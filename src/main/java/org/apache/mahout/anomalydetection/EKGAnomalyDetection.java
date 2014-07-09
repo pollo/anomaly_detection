@@ -255,7 +255,7 @@ public class EKGAnomalyDetection extends TimeSeriesAnomalyDetection {
     // output anomalies
     try (Formatter out = new Formatter("anomalies.tsv")) {
       for (Anomaly a : anomalies) {
-        out.format("%.3f\t%.3f\t%d\n", a.getData(), a.getError(),
+        out.format("%.3f\t%.3f\t%d\n", a.getData().getQuick(0), a.getError(),
           a.getIndex());
       }
     }
