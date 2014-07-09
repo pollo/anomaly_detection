@@ -1,14 +1,14 @@
-# Anomaly detection in Mahout
+# Time series anomaly detection in Mahout
 
 ## Introduction
 
-This repository contains a new class for anomaly detection in Mahout and a corresponding example based on Ted Dunning's previous work on EKG data.
+This repository contains a new class for time series anomaly detection in Mahout and a corresponding example based on Ted Dunning's previous work on EKG data.
 
-You can find the new class under  ```src/main/java/org/apache/mahout/anomalydetection/AnomalyDetection.java```.
+You can find the new class under  ```src/main/java/org/apache/mahout/anomalydetection/TimeSeriesAnomalyDetection.java```.
 
-The AnomalyDetection class embeds the t-digest algorithm in order to spot anomalies and guides the user through the process of anomaly detection.
+The TimeSeriesAnomalyDetection class embeds the t-digest algorithm in order to spot anomalies and guides the user through the process of anomaly detection.
 
-The EKAnomalyDetection class implements an anomaly detection scenario by applying the newly introduced AnomalyDetection class.
+The EKAnomalyDetection class implements a time series anomaly detection scenario by applying the newly introduced TimeSeriesAnomalyDetection class.
 
 The example is provided under ```src/main/java/org/apache/mahout/anomalydetection/EKGAnomalyDetection.java```.
 
