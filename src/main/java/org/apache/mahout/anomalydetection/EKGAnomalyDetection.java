@@ -51,14 +51,14 @@ import java.util.List;
  * signal to identify out the error.
  */
 public class EKGAnomalyDetection extends TimeSeriesAnomalyDetection {
+  // the fraction of returned anomalies
+  public static final double ANOMALY_FRACTION = 10.0 / 100;
   // Window Size for EKG Data Example
   private final int WINDOW = 32;
   // distance between starting points of two adjacent windows
   private int STEP = 2;
   // number of constructed windows used for clustering
   private int SAMPLES = 200000;
-  // the fraction of returned anomalies
-  private final double ANOMALY_FRACTION = 10.0 / 100;
   // according to Ted Dunning's description, 100 roughly represents a
   // compression ratio for small to mid-size data sets
   private final double COMPRESSION = 100;
@@ -221,7 +221,7 @@ public class EKGAnomalyDetection extends TimeSeriesAnomalyDetection {
    */
   protected double computeError(Vector actualPoint,
                                 Vector reconstructedPoint) {
-    return actualPoint.getQuick(0) - reconstructedPoint.getQuick(0); 
+    return actualPoint.getQuick(0) - reconstructedPoint.getQuick(0);
   }
 
   public void run() throws IOException {
@@ -255,7 +255,7 @@ public class EKGAnomalyDetection extends TimeSeriesAnomalyDetection {
     // output anomalies
     try (Formatter out = new Formatter("anomalies.tsv")) {
       for (Anomaly a : anomalies) {
-        out.format("%.3f\t%.3f\t%d\n", a.getData(), a.getError(),
+        out.format("%.3f\t%.3f\t%d\n", a.getData().getQuick(0), a.getError(),
           a.getIndex());
       }
     }
