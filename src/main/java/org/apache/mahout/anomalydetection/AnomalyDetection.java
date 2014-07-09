@@ -19,7 +19,8 @@ package org.apache.mahout.anomalydetection;
 
 import com.google.common.collect.Lists;
 import org.apache.mahout.math.*;
-import org.apache.mahout.math.stats.TDigest;
+import com.tdunning.math.stats.TDigest;
+import com.tdunning.math.stats.TreeDigest;
 
 import java.util.List;
 
@@ -86,7 +87,7 @@ public abstract class AnomalyDetection {
     }
 
     // run t-digest to compute threshold corresponding to the quantile
-    org.apache.mahout.math.stats.TDigest digest = new TDigest(compression);
+    TDigest digest = new TreeDigest(compression);
     for (org.apache.mahout.math.Vector.Element element : delta.all()) {
       digest.add(Math.abs(element.get()));
     }
