@@ -18,16 +18,23 @@
 package org.apache.mahout.anomalydetection;
 
 import com.google.common.collect.Lists;
-import org.apache.mahout.math.*;
+import org.apache.mahout.math.CardinalityException;
+import org.apache.mahout.math.DenseVector;
+import org.apache.mahout.math.Matrix;
+
 import com.tdunning.math.stats.TDigest;
 import com.tdunning.math.stats.TreeDigest;
+import org.apache.mahout.math.Vector;
 
 import java.util.List;
 
 /**
- * Abstract base class for anomaly detection. The process is modeled in three steps: - building a
+ * Abstract base class for time series anomaly detection. The process is modeled in three steps: - building a
  * model for the data - using the model to build a representation of the data - apply t-digest to
- * detect when the representation differs from the data
+ * detect when the representation differs from the data.
+ * <p/>
+ * The time series is represented as a Matrix, where each row correspond to a point of the time series. Each
+ * point of the time series may be represented by multiple features and is thus stored as a Vector.
  * <p/>
  * The class should be extended implementing the methods buildModel and reconstructSignal. The
  * method detectAnomalies can then be used to retrieve the anomalies found with the application of
@@ -36,7 +43,7 @@ import java.util.List;
  * The concept is taken from the book Practical Machine Learning:A New Look At Anomaly Detection by
  * Ted Dunning and Ellen Friedman
  */
-public abstract class AnomalyDetection {
+public abstract class TimeSeriesAnomalyDetection {
   /**
    * Build a model for the data. The user dependent implementation should store the model into the
    * state of the class. The model will then be used into the reconstructSignal method to build a
@@ -44,7 +51,7 @@ public abstract class AnomalyDetection {
    *
    * @param data Data used to build (or fit) the model
    */
-  public abstract void buildModel(org.apache.mahout.math.Vector data);
+  public abstract void buildModel(org.apache.mahout.math.Matrix data);
 
   /**
    * Builds and returns the closest representation (reconstructed signal) of the data which the
@@ -53,14 +60,34 @@ public abstract class AnomalyDetection {
    * @param data Data for reconstruction
    * @return The reconstructed signal
    */
-  public abstract org.apache.mahout.math.Vector reconstructSignal(
-    org.apache.mahout.math.Vector data);
+  public abstract org.apache.mahout.math.Matrix reconstructSignal(
+    org.apache.mahout.math.Matrix data);
+
+  /**
+   * Used by detectAnomalies to compute the error between the feature vector of an actual point
+   * of the time series and the feature vector of a point in the reconstructed time series.
+   * <p/>
+   * Computes the error vector as difference between the two vectors and return s
+   *
+   * @param actualPoint Feature vector of an actual point
+   * @param reconstructedPoint Feature vector of a reconstructed point
+   * @return The error between the two points.
+   */
+  protected double computeError(org.apache.mahout.math.Vector actualPoint,
+                                org.apache.mahout.math.Vector reconstructedPoint) {
+    Vector error = actualPoint.minus(reconstructedPoint);
+    return error.norm(2);
+  }
 
   /**
    * Detects and returns the anomalies.
    * <p/>
-   * First a reconstruction of the data is obtained using the reconstructSignal method. Then the
-   * t-digest algorithm is used to detect when the reconstructed signal differs too much from the
+   * First a reconstruction of the data is obtained using the reconstructSignal method. Then for
+   * each point in the time series the reconstructed signal is compared to the actual data. The error
+   * between them is computed using the method computeError which by default returns the difference
+   * vector norm but may be overridden by the user.
+   * <p/>
+   * Then the t-digest algorithm is used to detect when the reconstructed signal differs too much from the
    * actual data (depending on the quantile parameter).
    *
    * @param data            Data used for anomaly detection
@@ -72,34 +99,37 @@ public abstract class AnomalyDetection {
    *                                  size of the data
    */
   public List<Anomaly> detectAnomalies(
-    Vector data,
+    Matrix data,
     double anomalyFraction,
     double compression) throws IllegalArgumentException {
     // reconstruct signal starting from data
-    Vector reconstructedSignal = this.reconstructSignal(data);
+    Matrix reconstructedSignal = this.reconstructSignal(data);
 
-    // calculate error between reconstructed signal and actual data
-    Vector delta;
-    try {
-      delta = data.minus(reconstructedSignal);
-    } catch (CardinalityException e) {
+    // check length reconstructed signal = actual data
+    if (data.numRows() != reconstructedSignal.numRows()) {
       throw new IllegalArgumentException("The size of reconstructedSignal differs from the data size");
     }
 
     // run t-digest to compute threshold corresponding to the quantile
     TDigest digest = new TreeDigest(compression);
-    for (org.apache.mahout.math.Vector.Element element : delta.all()) {
-      digest.add(Math.abs(element.get()));
+
+    Vector delta = new DenseVector(data.numRows());
+    // for each point in the time series add computed error to the TDigest
+    for (int i=0; i<data.numRows(); i++) {
+      double error = computeError(data.viewRow(i), reconstructedSignal.viewRow(i));
+      delta.setQuick(i, error);
+      digest.add(Math.abs(error));
     }
     double threshold = digest.quantile(1 - anomalyFraction);
 
+
     // output anomalies (error above threshold)
     List<Anomaly> anomalies = Lists.newArrayList();
-    for (int i = 0; i < data.size(); i++) {
+    for (int i = 0; i < data.numRows(); i++) {
       double element = delta.getQuick(i);
       if (Math.abs(element) > threshold) {
         // insert data, error and index into return Map
-        anomalies.add(new Anomaly(data.getQuick(i),
+        anomalies.add(new Anomaly(data.viewRow(i),
           element,
           i));
       }
@@ -110,11 +140,11 @@ public abstract class AnomalyDetection {
 }
 
 class Anomaly {
-  private double data;
+  private Vector data;
   private double error;
   private int index;
 
-  public Anomaly(double data,
+  public Anomaly(Vector data,
                  double error,
                  int index) {
     this.data = data;
@@ -122,7 +152,7 @@ class Anomaly {
     this.index = index;
   }
 
-  public double getData() {
+  public Vector getData() {
     return data;
   }
 

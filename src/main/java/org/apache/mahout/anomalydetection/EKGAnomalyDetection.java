@@ -50,7 +50,7 @@ import java.util.List;
  * Read EKG data, extract windows and apply k-means clustering. Afterwards, build a reconstructed
  * signal to identify out the error.
  */
-public class EKGAnomalyDetection extends AnomalyDetection {
+public class EKGAnomalyDetection extends TimeSeriesAnomalyDetection {
   // Window Size for EKG Data Example
   private final int WINDOW = 32;
   // distance between starting points of two adjacent windows
@@ -77,14 +77,14 @@ public class EKGAnomalyDetection extends AnomalyDetection {
    * @return Vector of Data Points
    * @throws IOException
    */
-  public DenseVector read16b(File in, double scale) throws IOException {
+  public Matrix read16b(File in, double scale) throws IOException {
     DataInputStream input = new DataInputStream(new FileInputStream(in));
 
     int rows = (int) (in.length() / 2);
 
-    DenseVector data = new DenseVector(rows);
+    DenseMatrix data = new DenseMatrix(rows, 1);
     for (int i = 0; i < rows; i++) {
-      data.setQuick(i, input.readShort() * scale);
+      data.setQuick(i, 0, input.readShort() * scale);
     }
     return data;
   }
@@ -95,7 +95,9 @@ public class EKGAnomalyDetection extends AnomalyDetection {
    *
    * @param trace EKG Data Points.
    */
-  public void buildModel(Vector trace) {
+  public void buildModel(Matrix data) {
+    Vector trace = data.viewColumn(0);
+
     // initialize variable for timing output
     this.t0 = System.nanoTime() / 1e9;
 
@@ -150,14 +152,15 @@ public class EKGAnomalyDetection extends AnomalyDetection {
    * @param trace Data EKG Data Points.
    * @return The reconstructed Signal.
    */
-  public Vector reconstructSignal(Vector trace) {
+  public Matrix reconstructSignal(Matrix data) {
+    Vector trace = data.viewColumn(0);
     // Reconstruct the Signal. Each window can be looked at independently
     // due to the windowing.
     // This works because the window before and after the current one will
     // independently approximate the portion of the signal
     // left over after subtracting this window.
 
-    Vector reconstructedSignal = new DenseVector(trace.size());
+    Matrix reconstructedSignal = new DenseMatrix(trace.size(), 1);
 
     try (Formatter out = new Formatter("trace.tsv")) {
       // First Column = original, Second Column = reconstructed
@@ -199,7 +202,7 @@ public class EKGAnomalyDetection extends AnomalyDetection {
         for (int j = 0; j < WINDOW / 2; j++) {
           out.format("%.3f\t%.3f\t%d\n", rx.get(j, 0), rx.get(j, 1),
             ((WeightedVector) cluster.getValue()).getIndex());
-          reconstructedSignal.setQuick(i + j, rx.get(j, 1));
+          reconstructedSignal.setQuick(i + j, 0, rx.get(j, 1));
         }
       }
     } catch (FileNotFoundException e) {
@@ -212,12 +215,21 @@ public class EKGAnomalyDetection extends AnomalyDetection {
     return reconstructedSignal;
   }
 
+  @Override
+  /**
+   * Returns the error as the difference of the two numbers contained in the two vectors
+   */
+  protected double computeError(Vector actualPoint,
+                                Vector reconstructedPoint) {
+    return actualPoint.getQuick(0) - reconstructedPoint.getQuick(0); 
+  }
+
   public void run() throws IOException {
 
     // read the EKG data
     URL x = Resources.getResource("a02.dat");
     this.t0 = System.nanoTime() / 1e9;
-    Vector trace = this.read16b(new File(x.getPath()), 1.0 / 200);
+    Matrix trace = this.read16b(new File(x.getPath()), 1.0 / 200);
     this.t1 = System.nanoTime() / 1e9;
     System.out
       .printf("Read test data from %s in %.2f s\n", x, this.t1 - t0);
