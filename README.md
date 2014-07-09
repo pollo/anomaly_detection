@@ -19,9 +19,11 @@ In order to run the example:
 
 1. Assure maven is installed in your system ([https://maven.apache.org/](https://maven.apache.org/))
 2. Execute: ```mvn clean install```
-3. Execute the following command: 
+3. Execute the following command:
 
 	```mvn -q exec:java -Dexec.mainClass=org.apache.mahout.anomalydetection.EKGAnomalyDetection```
+
+In order to test it run:  ```mvn test```
 
 ## References
 For further information:

@@ -19,9 +19,9 @@ public class EKGAnomalyDetectionTest {
     }
     Scanner anomaliesFile = new Scanner(new File("anomalies.tsv"));
     int anomalies_number = 0;
-    while (traceFile.hasNextLine()) {
+    while (anomaliesFile.hasNextLine()) {
       anomalies_number += 1;
-      traceFile.nextLine();
+      anomaliesFile.nextLine();
     }
 
     double threshold = 0.001;
