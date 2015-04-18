@@ -17,7 +17,6 @@
 
 package org.apache.mahout.anomalydetection;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import org.apache.mahout.clustering.streaming.cluster.BallKMeans;
 import org.apache.mahout.common.distance.EuclideanDistanceMeasure;
@@ -37,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 
@@ -56,12 +56,12 @@ public class EKGAnomalyDetection extends TimeSeriesAnomalyDetection {
   // Window Size for EKG Data Example
   private final int WINDOW = 32;
   // distance between starting points of two adjacent windows
-  private int STEP = 2;
+  private static final int STEP = 2;
   // number of constructed windows used for clustering
-  private int SAMPLES = 200000;
+  private static final int SAMPLES = 200000;
   // according to Ted Dunning's description, 100 roughly represents a
   // compression ratio for small to mid-size data sets
-  private final double COMPRESSION = 100;
+  private static final double COMPRESSION = 100;
 
   private Vector window;
   private double t0;
@@ -102,13 +102,12 @@ public class EKGAnomalyDetection extends TimeSeriesAnomalyDetection {
     this.t0 = System.nanoTime() / 1e9;
 
     // list of windowed data
-    List<WeightedVector> r = Lists.newArrayList();
+    List<WeightedVector> r = new ArrayList<>();
 
     // create windows according to SAMPLES and STEP
     for (int i = 0; i < SAMPLES; i++) {
       int offset = i * STEP;
-      WeightedVector row = new WeightedVector(new DenseVector(WINDOW), 1,
-        i);
+      WeightedVector row = new WeightedVector(new DenseVector(WINDOW), 1, i);
       row.assign(trace.viewPart(offset, WINDOW));
       row.assign(this.window, Functions.MULT);
       // normalizing the data
@@ -121,8 +120,7 @@ public class EKGAnomalyDetection extends TimeSeriesAnomalyDetection {
 
     // clustering the data by applying k-means
     this.t0 = System.nanoTime() / 1e9;
-    BallKMeans km = new BallKMeans(new BruteSearch(
-      new EuclideanDistanceMeasure()), 400, 10);
+    BallKMeans km = new BallKMeans(new BruteSearch(new EuclideanDistanceMeasure()), 400, 10);
     this.clustering = km.cluster(r);
     this.t1 = System.nanoTime() / 1e9;
     System.out.printf("Clustered in %.2f s\n", this.t1 - this.t0);

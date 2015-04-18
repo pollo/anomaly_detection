@@ -1,10 +1,10 @@
 package org.apache.mahout.anomalydetection;
 
-import org.junit.Test;
-import java.io.*;
+import java.io.File;
 import java.util.Scanner;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class EKGAnomalyDetectionTest {
 
