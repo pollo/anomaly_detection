@@ -17,15 +17,13 @@
 
 package org.apache.mahout.anomalydetection;
 
-import com.google.common.collect.Lists;
-import org.apache.mahout.math.CardinalityException;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Matrix;
-
-import com.tdunning.math.stats.TDigest;
-import com.tdunning.math.stats.TreeDigest;
 import org.apache.mahout.math.Vector;
 
+import com.tdunning.math.stats.TDigest;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -111,7 +109,7 @@ public abstract class TimeSeriesAnomalyDetection {
     }
 
     // run t-digest to compute threshold corresponding to the quantile
-    TDigest digest = new TreeDigest(compression);
+    TDigest digest = TDigest.createDigest(compression);
 
     Vector delta = new DenseVector(data.numRows());
     // for each point in the time series add computed error to the TDigest
@@ -124,7 +122,7 @@ public abstract class TimeSeriesAnomalyDetection {
 
 
     // output anomalies (error above threshold)
-    List<Anomaly> anomalies = Lists.newArrayList();
+    List<Anomaly> anomalies = new ArrayList<>();
     for (int i = 0; i < data.numRows(); i++) {
       double element = delta.getQuick(i);
       if (Math.abs(element) > threshold) {
